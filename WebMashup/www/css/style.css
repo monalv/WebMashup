@@ -1,0 +1,290 @@
+@charset "utf-8";
+    body, html, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, button, textarea, select, p, blockquote, th, td {
+    margin: 0;
+    padding: 0;
+}
+html {
+overflow-y:scroll;
+}
+
+fieldset,  {
+    border: 0;
+}
+, ins {
+    text-decoration: none;
+}
+li {
+    list-style: none;
+    list-style-position: outside;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-size: 100%;
+    font-weight: normal;
+}
+a:link {
+    color: white;
+    text-decoration: none;
+}
+a:visited {
+    color: white;
+    text-decoration: none;
+}
+a:hover {
+    color:#CFF;
+    text-decoration: underline;
+}
+a:active {
+    color: #white;
+    text-decoration: blink;
+}
+a.hlink:link {
+    color: #900;
+    text-decoration: none;
+    border-bottom: 1px dotted #900;
+}
+a.hlink:visited {
+    color: #900;
+    text-decoration: none;
+    border-bottom: 1px dotted #900;
+}
+a.hlink:hover {
+    color: #900;
+    text-decoration: none;
+    border-bottom: 1px solid #900;
+}
+a.hlink:active {
+    color: #f00;
+    text-decoration: blink;
+    border-bottom: 1px solid #f00;
+}
+a:active {
+    outline: none 0;
+    border: none 0;
+}
+
+body{
+	background-image:url(../bg3.jpg)}
+
+body, html {
+    font: normal 13px;
+    color: black;
+	margin-left:3%;
+	margin-right:3%;
+}
+#logo
+{
+	/*background-color:#999;*/
+	height:150px;
+}
+img.displayed
+{
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 50%;
+	height: 100%;
+}
+#artistname{
+	margin-top:3px;
+	height:8%;
+	font-family: "Rye", cursive;
+	color:white;
+	font-size:30px;
+	font-weight:600;
+	display:inline-block;
+	width:60%;
+}
+
+p {
+    font: normal 12px;
+    color: black;
+}
+
+#topcontainer
+{
+	height:42%;	
+	border-radius:20px;
+	background-color:#666666;
+}
+#dpcontainer
+{
+	margin-left:1%;
+	margin-top:1%;
+	margin-right:2%;
+	border: 3px solid;
+	width: 17%;
+	height: 90%;
+	float:left;
+	border-radius:15px;
+}
+#dpimage
+{
+	border-radius: 15px;
+    -moz-border-radius: 15px;
+    -khtml-border-radius: 15px;
+    -webkit-border-radius: 15px;
+}
+.forimage{
+	
+	margin-left:1%;
+	margin-top:1%;
+	margin-right:2%;
+	border: 3px solid yellow;
+	width: 17%;
+	height: 90%;
+	float:left;
+	}
+#desccontainer
+{
+	margin-top: 1%;
+	margin-right: 2%;
+	float: left;
+	font-size: 18px;
+	width: 50%;
+	height: 90%;
+	overflow:auto;
+}
+
+#descsubcontainer
+{
+	padding: 2%;
+	text-align:justify;
+}
+
+#detailscontainer
+{
+	margin-top:1%;
+	margin-right:1%;
+	height: 90%;
+	width:25%;
+	border:3px solid gray;
+	float:left;
+	font:Georgia, "Times New Roman", Times, serif;
+	font-size:18px;
+	border-radius:15px;
+}
+
+#detailscontainer ul li{
+	margin-left:3%;
+	font-weight:bold;
+	}
+
+.wrapper{
+margin:10%;
+}
+
+#artworktitle
+{
+	margin-top:2%;
+	font-family: "Rye", cursive;
+	color:white;
+	font-size:24px;
+	font-weight:200;
+}
+
+#slidercontainer
+{
+	/*	height:40%;*/
+	
+	background-color:#666666;
+}
+
+#BoxContainer
+{
+	margin-left:20%;
+    width:60%;
+    background-color:black;
+    height:100%;
+	margin-bottom:10px;	
+	border-radius:15px;
+}
+ 
+.Box
+{
+
+   	display:inline-block;
+	width: 100%;
+	height: 80%;
+	border-radius:20px;
+	margin:5%;
+	background-color:gray;
+	text-align:center;
+	border:thin solid #525056;
+	box-shadow: 0 0 20px;
+	color: #00a;
+	transition: box-shadow .2s;
+	cursor: hand; 
+	cursor: pointer;
+}
+
+.outerBox
+{
+   	display:inline-block;
+	width: 20%;
+	height:20%;
+	margin:5%;
+	text-align:center;
+	vertical-align:top;
+}
+
+.Subbox
+{
+	width:80%; 
+	height:80%;
+	background-color:black;
+    border-radius:20px;
+	padding:10%;
+	border-color:#DEDEDE;
+	border-bottom-width:thick;
+}
+
+
+div.Box:hover{
+	color:red;
+}
+
+.Boxtextheader
+{
+	font-family: Lora, serif;
+	color:white;
+	font-size:16px;
+	display:block;
+}
+.Boxtextcontent
+{
+	margin-top:5%;
+	font-family: Lora, serif;
+	color:white;
+	font-size:12px;
+	display:block;
+
+}
+.Boxtextcount
+{
+	margin-top:20%;
+	font-family: Lora, serif;
+	color:white;
+	font-size:12px;
+	display:block;
+}
+.BoxImage
+{
+	border-radius: 20px;
+    -moz-border-radius: 20px;
+    -khtml-border-radius: 20px;
+    -webkit-border-radius: 20px;
+	display:inline;
+}
+
+
+.boxText
+{
+	color:white;
+	height:20%;
+}
+
+.boxImageDiv 
+{
+	margin-top:auto
+}
+
