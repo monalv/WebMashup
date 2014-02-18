@@ -9,6 +9,17 @@
 	$con=mysql_connect('localhost','root','123');
 	if(!$con){
 		die(mysql_err());
+	}<?php
+	session_start();
+	$userid=4360;
+	#$userid=6966;
+	#$userid=1334;
+	if(isset($_GET['artistid'])){
+		$userid=$_GET['artistid'];
+	}
+	$con=mysql_connect('localhost','root','123');
+	if(!$con){
+		die(mysql_err());
 	}
 	mysql_select_db('artangled',$con);
 	$sql="select * from artist where artistid=".$userid;
