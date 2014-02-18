@@ -35,11 +35,18 @@
             $nationalitycount=0;
             $gendercount=0;
             $assistantcount=0;
+			$res  = new Array();
+			$row  = new Array();
+			$count  = new Array();
+			
             //-----------------------------------------------------counts declaration block-----------------------------------------
            
             $isstudentblock=1;      //stores if students are shown as a group out individual entries
 
             function generic($sql, $boolIncrBoxCount) {
+                if($boxcount < 8) {
+                    return array(null,null);
+                }
                 $var1=mysql_query($sql);
                 $var2=mysql_fetch_assoc($var1);
                 if($boolIncrBoxCount){
@@ -47,6 +54,7 @@
                 }
                 return array($var1, $var2);
             }
+			
             if($boxcount<8)
             {
                 //Query to fetch students of this artist
@@ -61,7 +69,8 @@
                         $boxcount+=1;
                 }
             }
-                    //Check assistants of
+            
+			//Check assistants of
             if($boxcount<8)
             {
                 $sql="SELECT artist1,artist2,name,image from relationship,artist where artist1=artistid and relationid=101 and artist2=".$userid;
@@ -70,65 +79,25 @@
                 $assistants = mysql_num_rows($resassistants);
                 $boxcount++;
             }
-            if($boxcount<8)
-            {
-                $sql="SELECT movement,subject,medium,nationality,gender,era from artist where artistid=".$userid;
-                $result=generic(sql,false);
-                $resothers=$result[0];
-                $rowothers=$result[1];
-            }
-            if($rowothers['movement']!="")
-            {
-                $sql="SELECT count(*) as cnt from artist where movement='".$rowothers['movement']."'";
-                $result=generic(sql,true);
-                $resmovements=$result[0];
-                $rowmovements=$result[1];
-                $movementcount=$rowmovements['cnt'];
-            }
-            //start from here and go ahead with subject as we did in Movement
-            if($boxcount<8)
-            {
-                if($rowothers['subject']!="")
-                {
-                    $sql="SELECT count(*) as cnt from artist where subject='".$rowothers['subject']."'";
+            
+			$sql="SELECT movement,subject,medium,nationality,gender,era from artist where artistid=".$userid;
+			$result=generic(sql,false);
+			$resothers=$result[0];
+			$rowothers=$result[1];
+            
+            $propsOfrowothers = new array('movement','subject','medium','nationality','gender');
+            $sql="SELECT count(*) as cnt from artist where "; //movement='".$rowothers['movement']."'";
+            //recheck syntax
+            foreach ($propsOfrowothers as $i) {
+                if($rowothers[$i] != "") {
+                    $sql .= $i. "'=" + .$rowothers[$i]."'";
                     $result=generic(sql,true);
-                    $ressubjects=$result[0];
-                    $rowsubjects=$result[1];
-                    $subjectcount=$rowsubjects['cnt'];
+                    //define these variables 
+                    $res[$i] = $result[0];
+                    $row[$i] = $result[1];
+                    $count[$i] = $row[$i]['cnt'];
                 }
             }
-            if($boxcount<8)
-            {
-                if($rowothers['medium']!="")
-                {
-                    $sql="SELECT count(*) as cnt from artist where medium='".$rowothers['medium']."'";
-                    $result=generic(sql,true);
-                    $resmediums=$result[0];
-                    $rowmediums=$result[1];
-                    $mediumcount=$rowmediums['cnt'];
-                }
-            }
-            if($boxcount<8)
-            {
-                if($rowothers['nationality']!="")
-                {
-                    $sql="SELECT count(*) as cnt from artist where nationality='".$rowothers['nationality']."'";
-                    $result=generic(sql,true);
-                    $resnationalitys=$result[0];
-                    $rownationalitys=$result[1];
-                    $nationalitycount=$rownationalitys['cnt'];
-                }
-            }
-            if($boxcount<8)
-            {
-                if($rowothers['gender']!="")
-                {
-                    $sql="SELECT count(*) as cnt from artist where gender='".$rowothers['gender']."' and era='".$rowothers['era']."'";
-                    $resgenders=mysql_query($sql);
-                    $rowgenders=mysql_fetch_assoc($resgenders);
-                    $gendercount=$rowgenders['cnt'];
-                }
-            }      
             //If there are still enough boxes to accomodate students individually
             if($isstudentblock==1 && ($boxcount+$studentcount-1)<=8)
             {
@@ -437,7 +406,7 @@
                             }
                             if($filledboxcount<4 && $assistantcount==1)
                             {
-                                    $rowassistants=mysql_fetch_assoc($resassistants);
+                                    $rowassistants=mysql_fetch_assoc($resassistant);
                                     echo('<div class="outerBox" > <div class="Box" id="box'.($filledboxcount+1).'"><img class="BoxImage" src=\'');
                                     if($rowassistants['image']!="")
                                     {
@@ -468,7 +437,7 @@
                                             $filledboxcount++;
                                             $assistantcount=0;
                             }
-                            if($filledboxcount<4 && $movementcount>0)
+                            if($filledboxcount<4 && $count["movement"]>0)
                             {
                                     echo('<div class="outerBox" > <div class="Box" style="position: relative;" id="box'.($filledboxcount+1).'"');
                                     echo('onclick=\'gotoCategory("","Movement","","'.$row1['movement'].'",""); \' >');
@@ -477,15 +446,15 @@
                                     echo('<span class="Boxtextcount">'.$movementcount.' artists</span>');
     */
                                     echo('<img src="/images/box-background.png" class="BoxImage" width="100%" height="100%" alt="Image not found"  style="z-index: -1"/>');
-                                    echo('<div style="position:absolute;left:15%;top:15%;"><span class="Boxtextheader">Art Movement</span> <span class="Boxtextcontent">'.$row1['movement'].'</span><span class="Boxtextcount">'.$movementcount.' artists</span></div><div class="boxText"></div></div>');
+                                    echo('<div style="position:absolute;left:15%;top:15%;"><span class="Boxtextheader">Art Movement</span> <span class="Boxtextcontent">'.$row1['movement'].'</span><span class="Boxtextcount">'.$count["movement"].' artists</span></div><div class="boxText"></div></div>');
                                            
                                     /*echo('</div></div>');*/
                                     echo('</div>');
                                    
                                     $filledboxcount++;
-                                    $movementcount=0;
+                                    $count["movement"]=0;
                             }
-                            if($filledboxcount<4 && $subjectcount>0)
+                            if($filledboxcount<4 && $count["subject"]>0)
                             {
                                     echo('<div class="outerBox" > <div class="Box" style="position: relative;" id="box'.($filledboxcount+1).'"');
                                     echo('onclick=\'gotoCategory("","Subject","","'.$row1['subject'].'",""); \' >');
@@ -494,14 +463,14 @@
                                     echo('<span class="Boxtextcount">'.$subjectcount.' artists</span>');
                                     echo('</div></div>');*/
                                     echo('<img src="/images/box-background.png" class="BoxImage" width="100%" height="100%" alt="Image not found"  style="z-index: -1"/>');
-                                    echo('<div style="position:absolute;left:15%;top:15%;"><span class="Boxtextheader">Art Subject</span> <span class="Boxtextcontent">'.$row1['subject'].'</span><span class="Boxtextcount">'.$subjectcount.' artists</span></div><div class="boxText"></div></div>');
+                                    echo('<div style="position:absolute;left:15%;top:15%;"><span class="Boxtextheader">Art Subject</span> <span class="Boxtextcontent">'.$row1['subject'].'</span><span class="Boxtextcount">'.$count["subject"].' artists</span></div><div class="boxText"></div></div>');
                                                                                    
                                             /*echo('</div></div>');*/
                                             echo('</div>');                        
                                     $filledboxcount++;
-                                    $subjectcount=0;
+                                    $count["subject"]=0;
                             }
-                            if($filledboxcount<4 && $mediumcount>0)
+                            if($filledboxcount<4 && $count["medium"]>0)
                             {
                                     echo('<div class="outerBox" > <div class="Box" style="position: relative;" id="box'.($filledboxcount+1).'"');
                                     echo('onclick=\'gotoCategory("","Medium","","'.$row1['medium'].'",""); \' >');
@@ -511,14 +480,14 @@
                                     echo('</div></div>');
                                     */
                                     echo('<img src="/images/box-background.png" class="BoxImage" width="100%" height="100%" alt="Image not found"  style="z-index: -1"/>');
-                                    echo('<div style="position:absolute;left:15%;top:15%;"><span class="Boxtextheader">Art Medium</span> <span class="Boxtextcontent">'.$row1['medium'].'</span><span class="Boxtextcount">'.$mediumcount.' artists</span></div><div class="boxText"></div></div>');
+                                    echo('<div style="position:absolute;left:15%;top:15%;"><span class="Boxtextheader">Art Medium</span> <span class="Boxtextcontent">'.$row1['medium'].'</span><span class="Boxtextcount">'.$count["medium"].' artists</span></div><div class="boxText"></div></div>');
                                                                                    
                                             /*echo('</div></div>');*/
                                             echo('</div>');                        
                                     $filledboxcount++;
-                                    $mediumcount=0;
+                                    $count["medium"]=0;
                             }
-                            if($filledboxcount<4 && $nationalitycount>0)
+                            if($filledboxcount<4 && $count["nationality"]>0)
                             {
                                     echo('<div class="outerBox" > <div class="Box" style="position: relative;" id="box'.($filledboxcount+1).'"');
                                     echo('onclick=\'gotoCategory("","Nationality","","'.$row1['nationality'].'",""); \' >');
@@ -527,14 +496,14 @@
                                     echo('<span class="Boxtextcount">'.$nationalitycount.' artists</span>');
                                     echo('</div></div>');*/
                                     echo('<img src="/images/box-background.png" class="BoxImage" width="100%" height="100%" alt="Image not found"  style="z-index: -1"/>');
-                                    echo('<div style="position:absolute;left:15%;top:15%;"><span class="Boxtextheader">'.$row1['nationality'].' artists</span> <span class="Boxtextcount">'.$nationalitycount.' artists</span></div><div class="boxText"></div></div>');
+                                    echo('<div style="position:absolute;left:15%;top:15%;"><span class="Boxtextheader">'.$row1['nationality'].' artists</span> <span class="Boxtextcount">'.$count["nationality"].' artists</span></div><div class="boxText"></div></div>');
                                                                                    
                                             /*echo('</div></div>');*/
                                             echo('</div>');
                                     $filledboxcount++;
-                                    $nationalitycount=0;
+                                    $count["nationality"]=0;
                             }
-                            if($filledboxcount<4 && $gendercount>0)
+                            if($filledboxcount<4 && $count["gender"]>0)
                             {
                                     echo('<div class="outerBox" > <div class="Box" style="position: relative;" id="box'.($filledboxcount+1).'"');
                                     echo('onclick=\'gotoCategory("","gender","era","female","'.$row1['era'].'"); \' >');
@@ -543,12 +512,12 @@
                                     echo('<span class="Boxtextcount">'.$gendercount.' artists</span>');
                                     echo('</div></div>');*/
                                     echo('<img src="/images/box-background.png" class="BoxImage" width="100%" height="100%" alt="Image not found"  style="z-index: -1"/>');
-                                    echo('<div style="position:absolute;left:15%;top:15%;"><span class="Boxtextheader">Women artists of</span> <span class="Boxtextcontent">'.$row1['era'].'</span><span class="Boxtextcount">'.$gendercount.' artists</span></div><div class="boxText"></div></div>');
+                                    echo('<div style="position:absolute;left:15%;top:15%;"><span class="Boxtextheader">Women artists of</span> <span class="Boxtextcontent">'.$row1['era'].'</span><span class="Boxtextcount">'.$count["gender"].' artists</span></div><div class="boxText"></div></div>');
                                                                                    
                                             /*echo('</div></div>');*/
                                             echo('</div>');
                                     $filledboxcount++;
-                                    $gendercount=0;
+                                    $count["gender"]=0;
                             }
                             //If blocks are empty and students are displayed in block
                             if($filledboxcount<4 && $isstudentblock==1 && $studentcount>0)
@@ -695,7 +664,7 @@
                                             $filledboxcount++;
                                             $assistantcount=0;
                             }
-                            if($filledboxcount<8 && $movementcount>0)
+                            if($filledboxcount<8 && $count["movement"]>0)
                             {
                                     echo('<div class="outerBox" > <div class="Box" style="position: relative;" id="box'.($filledboxcount+1).'"');
                                     echo('onclick=\'gotoCategory("","Movement","","'.$row1['movement'].'",""); \' >');
@@ -704,13 +673,13 @@
                                     echo('<span class="Boxtextcount">'.$movementcount.' artists</span>');
                                     echo('</div></div>');*/
                                     echo('<img src="/images/box-background.png" class="BoxImage" width="100%" height="100%" alt="Image not found"  style="z-index: -1"/>');
-                                    echo('<div style="position:absolute;left:15%;top:15%;"><span class="Boxtextheader">Art Movement</span> <span class="Boxtextcontent">'.$row1['movement'].'</span><span class="Boxtextcount">'.$movementcount.' artists</span></div><div class="boxText"></div></div>');
+                                    echo('<div style="position:absolute;left:15%;top:15%;"><span class="Boxtextheader">Art Movement</span> <span class="Boxtextcontent">'.$row1['movement'].'</span><span class="Boxtextcount">'.$count["movement"].' artists</span></div><div class="boxText"></div></div>');
                                            
                                     /*echo('</div></div>');*/
                                     echo('</div>');
                                     $filledboxcount++;
                             }
-                            if($filledboxcount<8 && $subjectcount>0)
+                            if($filledboxcount<8 && $count["subject"]>0)
                             {
                                     echo('<div class="outerBox" > <div class="Box" style="position: relative;" id="box'.($filledboxcount+1).'"');
                                     echo('onclick=\'gotoCategory("","Subject","","'.$row1['subject'].'",""); \' >');
@@ -719,13 +688,13 @@
                                     echo('<span class="Boxtextcount">'.$subjectcount.' artists</span>');
                                     echo('</div></div>');*/
                                     echo('<img src="/images/box-background.png" class="BoxImage" width="100%" height="100%" alt="Image not found"  style="z-index: -1"/>');
-                                    echo('<div style="position:absolute;left:15%;top:15%;"><span class="Boxtextheader">Art Subject</span> <span class="Boxtextcontent">'.$row1['subject'].'</span><span class="Boxtextcount">'.$subjectcount.' artists</span></div><div class="boxText"></div></div>');
+                                    echo('<div style="position:absolute;left:15%;top:15%;"><span class="Boxtextheader">Art Subject</span> <span class="Boxtextcontent">'.$row1['subject'].'</span><span class="Boxtextcount">'.$count["subject"].' artists</span></div><div class="boxText"></div></div>');
                                                                                    
                                             /*echo('</div></div>');*/
                                             echo('</div>');
                                     $filledboxcount++;
                             }
-                            if($filledboxcount<8 && $mediumcount>0)
+                            if($filledboxcount<8 && $count["medium"]>0)
                             {
                                     echo('<div class="outerBox" > <div class="Box" style="position: relative;" id="box'.($filledboxcount+1).'"');
                                     echo('onclick=\'gotoCategory("","Medium","","'.$row1['medium'].'",""); \' >');
@@ -734,13 +703,13 @@
                                     echo('<span class="Boxtextcount">'.$mediumcount.' artists</span>');
                                     echo('</div></div>');*/
                                     echo('<img src="/images/box-background.png" class="BoxImage" width="100%" height="100%" alt="Image not found"  style="z-index: -1"/>');
-                                    echo('<div style="position:absolute;left:15%;top:15%;"><span class="Boxtextheader">Art Medium</span> <span class="Boxtextcontent">'.$row1['medium'].'</span><span class="Boxtextcount">'.$mediumcount.' artists</span></div><div class="boxText"></div></div>');
+                                    echo('<div style="position:absolute;left:15%;top:15%;"><span class="Boxtextheader">Art Medium</span> <span class="Boxtextcontent">'.$row1['medium'].'</span><span class="Boxtextcount">'.$count["medium"].' artists</span></div><div class="boxText"></div></div>');
                                                                                    
                                             /*echo('</div></div>');*/
                                             echo('</div>');        
                                     $filledboxcount++;
                             }
-                            if($filledboxcount<8 && $nationalitycount>0)
+                            if($filledboxcount<8 && $count["nationality"]>0)
                             {
                                     echo('<div class="outerBox" > <div class="Box" style="position: relative;" id="box'.($filledboxcount+1).'"');
                                     echo('onclick=\'gotoCategory("","Nationality","","'.$row1['nationality'].'",""); \' >');
@@ -749,13 +718,13 @@
                                     echo('<span class="Boxtextcount">'.$nationalitycount.' artists</span>');
                                     echo('</div></div>');*/
                                     echo('<img src="/images/box-background.png" class="BoxImage" width="100%" height="100%" alt="Image not found"  style="z-index: -1"/>');
-                                    echo('<div style="position:absolute;left:15%;top:15%;"><span class="Boxtextheader">'.$row1['nationality'].' artists</span> <span class="Boxtextcount">'.$nationalitycount.' artists</span></div><div class="boxText"></div></div>');
+                                    echo('<div style="position:absolute;left:15%;top:15%;"><span class="Boxtextheader">'.$row1['nationality'].' artists</span> <span class="Boxtextcount">'.$count["nationality"].' artists</span></div><div class="boxText"></div></div>');
                                                                                    
                                             /*echo('</div></div>');*/
                                             echo('</div>');
                                     $filledboxcount++;
                             }
-                            if($filledboxcount<8 && $gendercount>0)
+                            if($filledboxcount<8 && $count["gender"]>0)
                             {
                                     echo('<div class="outerBox" > <div class="Box" style="position: relative;" id="box'.($filledboxcount+1).'"');
                                     echo('onclick=\'gotoCategory("","gender","era","female","'.$row1['era'].'"); \' >');
@@ -764,7 +733,7 @@
                                     echo('<span class="Boxtextcount">'.$gendercount.' artists</span>');
                                     echo('</div></div>');*/
                                     echo('<img src="/images/box-background.png" class="BoxImage" width="100%" height="100%" alt="Image not found"  style="z-index: -1"/>');
-                                    echo('<div style="position:absolute;left:15%;top:15%;"><span class="Boxtextheader">Women artists of</span> <span class="Boxtextcontent">'.$row1['era'].'</span><span class="Boxtextcount">'.$gendercount.' artists</span></div><div class="boxText"></div></div>');
+                                    echo('<div style="position:absolute;left:15%;top:15%;"><span class="Boxtextheader">Women artists of</span> <span class="Boxtextcontent">'.$row1['era'].'</span><span class="Boxtextcount">'.$count["gender"].' artists</span></div><div class="boxText"></div></div>');
                                                                                    
                                             /*echo('</div></div>');*/
                                             echo('</div>');
