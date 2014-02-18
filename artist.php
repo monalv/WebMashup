@@ -10,133 +10,121 @@
 	if(!$con){
 		die(mysql_err());
 	}
-	else
-	{
-		mysql_select_db('artangled',$con);
-		$sql="select * from artist where artistid=".$userid;
-		$res=mysql_query($sql);
-		$row1=mysql_fetch_assoc($res);
-		
-		//Query the artworks
-		$sql="SELECT artId,title,medium,artsize,artyear,artlink from artwork where artistid=".$userid." LIMIT 200";
-		$resartworks=mysql_query($sql);
-		
-		
-		//Query to fetch direct relations. Each relation goes in a box
-		$sql="SELECT artist1,artist2,relationship,name,image from relationship,relationlist,artist where artist2=artistid and relationid=id and  artist1=".$userid;
-		$resrelations=mysql_query($sql);
-		//-----------------------------------------------------counts declaration block-----------------------------------------
-		$relationscount=mysql_num_rows($resrelations);
-		$boxcount=$relationscount;
-		$studentcount=0;
-		$movementcount=0;
-		$subjectcount=0;
-		$mediumcount=0;
-		$nationalitycount=0;
-		$gendercount=0;
-		$assistantcount=0;
-		//-----------------------------------------------------counts declaration block-----------------------------------------
-		
-		$isstudentblock=1;	//stores if students are shown as a group out individual entries
-		if($boxcount<8)
-		{
-			//Query to fetch students of this artist
-			$sql="SELECT artist1,artist2,name,image from relationship,artist where artist1=artistid and   relationid=100 and artist2=".$userid;
-			$resstudents=mysql_query($sql);
-			$studentcount=mysql_num_rows($resstudents);
-			if($boxcount+$studentcount<=3)
-			{
-				$isstudentblock=0;
-				$boxcount+=$studentcount;
-			}
-			else if($studentcount==1)
-			{
-				$isstudentblock=0;
-				$boxcount+=$studentcount;
-			}
-			else if($studentcount>0)
-			{
-				$boxcount+=1;
-			}
-			//Check assistants of
-			if($boxcount<8)
-			{
-				$sql="SELECT artist1,artist2,name,image from relationship,artist where artist1=artistid and   relationid=101 and artist2=".$userid;
-				$resassistants=mysql_query($sql);
-				$assistantcount=mysql_num_rows($resassistants);
-				$boxcount+=1;
-			
-				if($boxcount<8)
-				{
-				$sql="select movement,subject,medium,nationality,gender,era from artist where artistid=".$userid;
-				$resothers=mysql_query($sql);
-				$rowothers=mysql_fetch_assoc($resothers);
-				if($rowothers['movement']!="")
-				{
-					$sql="select count(*) as cnt from artist where movement='".$rowothers['movement']."'";
-					$resmovements=mysql_query($sql);
-					$rowmovements=mysql_fetch_assoc($resmovements);
-					$movementcount=$rowmovements['cnt'];
-					$boxcount+=1;
-				}
-				//start from here and go ahead with subject as we did in Movement
-				if($boxcount<8)
-				{
-					if($rowothers['subject']!="")
-					{
-						$sql="select count(*) as cnt from artist where subject='".$rowothers['subject']."'";
-						$ressubjects=mysql_query($sql);
-						$rowsubjects=mysql_fetch_assoc($ressubjects);
-						$subjectcount=$rowsubjects['cnt'];
-						$boxcount+=1;
-					}
-					if($boxcount<8)
-					{
-						if($rowothers['medium']!="")
-						{
-							$sql="select count(*) as cnt from artist where medium='".$rowothers['medium']."'";
-							$resmediums=mysql_query($sql);
-							$rowmediums=mysql_fetch_assoc($resmediums);
-							$mediumcount=$rowmediums['cnt'];
-							$boxcount+=1;
-						}
-						if($boxcount<8)
-						{
-							if($rowothers['nationality']!="")
-							{
-								$sql="select count(*) as cnt from artist where nationality='".$rowothers['nationality']."'";
-								$resnationalitys=mysql_query($sql);
-								$rownationalitys=mysql_fetch_assoc($resnationalitys);
-								$nationalitycount=$rownationalitys['cnt'];
-								$boxcount+=1;
-							}
-							if($boxcount<8)
-							{
-								if($rowothers['gender']!="")
-								{
-									$sql="select count(*) as cnt from artist where gender='".$rowothers['gender']."' and era='".$rowothers['era']."'";
-									$resgenders=mysql_query($sql);
-									$rowgenders=mysql_fetch_assoc($resgenders);
-									$gendercount=$rowgenders['cnt'];
-									$boxcount+=1;
-								}
-							}
-						}
-					}
-				}
-				}
-
-			}
-		
-		}
-		//If there are still enough boxes to accomodate students individually
-		if($isstudentblock==1 && ($boxcount+$studentcount-1)<=8)
-		{
-			$isstudentblock=0;
-			$boxcount+=$studentcount-1;
-		}
+	mysql_select_db('artangled',$con);
+	$sql="select * from artist where artistid=".$userid;
+	$res=mysql_query($sql);
+	$row1=mysql_fetch_assoc($res);
 	
-		mysql_close($con);
+	//Query the artworks
+	$sql="SELECT artId,title,medium,artsize,artyear,artlink from artwork where artistid=".$userid." LIMIT 200";
+	$resartworks=mysql_query($sql);
+	
+	
+	//Query to fetch direct relations. Each relation goes in a box
+	$sql="SELECT artist1,artist2,relationship,name,image from relationship,relationlist,artist where artist2=artistid and relationid=id and  artist1=".$userid;
+	$resrelations=mysql_query($sql);
+	//-----------------------------------------------------counts declaration block-----------------------------------------
+	$relationscount=mysql_num_rows($resrelations);
+	$boxcount=$relationscount;
+	$studentcount=0;
+	$movementcount=0;
+	$subjectcount=0;
+	$mediumcount=0;
+	$nationalitycount=0;
+	$gendercount=0;
+	$assistantcount=0;
+	//-----------------------------------------------------counts declaration block-----------------------------------------
+	
+	$isstudentblock=1;	//stores if students are shown as a group out individual entries
+	if($boxcount<8)
+	{
+		//Query to fetch students of this artist
+		$sql="SELECT artist1,artist2,name,image from relationship,artist where artist1=artistid and relationid=100 and artist2=".$userid;
+		$resstudents=mysql_query($sql);
+		$studentcount=mysql_num_rows($resstudents);
+		if($boxcount+$studentc0ount<=3 || $studentcount==1) {
+			$isstudentblock=0;
+			$boxcount+=$studentcount;
+		}
+		else if($studentcount>0) {
+			$boxcount+=1;
+		}
+	}
+		//Check assistants of
+	if($boxcount<8)
+	{
+		$sql="SELECT artist1,artist2,name,image from relationship,artist where artist1=artistid and relationid=101 and artist2=".$userid;
+		$resassistants=mysql_query($sql);
+		$assistantcount=mysql_num_rows($resassistants);
+		$boxcount+=1;
+	}
+	if($boxcount<8)
+	{
+		$sql="SELECT movement,subject,medium,nationality,gender,era from artist where artistid=".$userid;
+		$resothers=mysql_query($sql);
+		$rowothers=mysql_fetch_assoc($resothers);
+	}
+	if($rowothers['movement']!="")
+	{
+		$sql="SELECT count(*) as cnt from artist where movement='".$rowothers['movement']."'";
+		$resmovements=mysql_query($sql);
+		$rowmovements=mysql_fetch_assoc($resmovements);
+		$movementcount=$rowmovements['cnt'];
+		$boxcount+=1;
+	}
+	//start from here and go ahead with subject as we did in Movement
+	if($boxcount<8)
+	{
+		if($rowothers['subject']!="")
+		{
+			$sql="SELECT count(*) as cnt from artist where subject='".$rowothers['subject']."'";
+			$ressubjects=mysql_query($sql);
+			$rowsubjects=mysql_fetch_assoc($ressubjects);
+			$subjectcount=$rowsubjects['cnt'];
+			$boxcount+=1;
+		}
+	}
+	if($boxcount<8)
+	{
+		if($rowothers['medium']!="")
+		{
+			$sql="SELECT count(*) as cnt from artist where medium='".$rowothers['medium']."'";
+			$resmediums=mysql_query($sql);
+			$rowmediums=mysql_fetch_assoc($resmediums);
+			$mediumcount=$rowmediums['cnt'];
+			$boxcount+=1;
+		}
+	}
+	if($boxcount<8)
+	{
+		if($rowothers['nationality']!="")
+		{
+			$sql="SELECT count(*) as cnt from artist where nationality='".$rowothers['nationality']."'";
+			$resnationalitys=mysql_query($sql);
+			$rownationalitys=mysql_fetch_assoc($resnationalitys);
+			$nationalitycount=$rownationalitys['cnt'];
+			$boxcount+=1;
+		}
+	}
+	if($boxcount<8)
+	{
+		if($rowothers['gender']!="")
+		{
+			$sql="SELECT count(*) as cnt from artist where gender='".$rowothers['gender']."' and era='".$rowothers['era']."'";
+			$resgenders=mysql_query($sql);
+			$rowgenders=mysql_fetch_assoc($resgenders);
+			$gendercount=$rowgenders['cnt'];
+			$boxcount+=1;
+		}
+	}	
+	//If there are still enough boxes to accomodate students individually
+	if($isstudentblock==1 && ($boxcount+$studentcount-1)<=8)
+	{
+		$isstudentblock=0;
+		$boxcount+=$studentcount-1;
+	}
+
+	mysql_close($con);
 	
 	
 	
